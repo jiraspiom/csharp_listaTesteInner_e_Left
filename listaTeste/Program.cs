@@ -7,6 +7,7 @@ List<Usuario> nomes = new List<Usuario>
 };
 
 nomes.Add(new Usuario { Id = 4, Nome = "usuario4" });
+nomes.Add(new Usuario { Id = 5, Nome = "usuario5" });
 
 List<Funcionario> funcionarios = new List<Funcionario>
 {
@@ -54,13 +55,12 @@ foreach (var item in resultleft)
 }
 
 //--------------------------------------------------
-
-List<Usuario> Lista()
+List<Usuario> Lista(List<Usuario> listaOri, List<Funcionario> listaNova)
 {
-    var result = nomes
-                .Join(funcionarios,
-                    nomes => nomes.Id, funcionarios => funcionarios.Id,
-                    (nomes, funcionarios) => new { Nomes = nomes, Funcionarios = funcionarios })
+    var result = listaOri
+                .Join(listaNova,
+                    listaOri => listaOri.Id, listaNova => listaNova.Id,
+                    (listaOri, listaNova) => new { Nomes = listaOri, Funcionarios = listaNova })
                 .Select(a => new Usuario
                 {
                     Id = a.Nomes.Id,
@@ -70,15 +70,14 @@ List<Usuario> Lista()
                 .ToList();
 
     return result;
-
 }
 
-List<Usuario> ListaLeft()
+List<Usuario> ListaLeft(List<Usuario> listaOri, List<Funcionario> listaNova)
 {
-    var resultleft = nomes
-                    .GroupJoin(funcionarios,
-                        nomes => nomes.Id, funcionarios => funcionarios.Id,
-                        (nomes, funcionarios) => new { Nomes = nomes, Funcionarios = funcionarios.FirstOrDefault() })
+    var resultleft = listaOri
+                    .GroupJoin(listaNova,
+                        listaOri => listaOri.Id, listaNova => listaNova.Id,
+                        (listaOri, listaNova) => new { Nomes = listaOri, Funcionarios = listaNova.FirstOrDefault() })
                     .Select(uai => new Usuario
                     {
                         Id = uai.Nomes.Id,
@@ -90,13 +89,13 @@ List<Usuario> ListaLeft()
 }
 
 Console.WriteLine("-----lista------");
-foreach (var item in Lista())
+foreach (var item in Lista(nomes, funcionarios))
 {
     Console.WriteLine($"{item.Id} - {item.Nome} - {item.Cargo}");
 }
 
 Console.WriteLine("-----left------");
-foreach (var item in ListaLeft())
+foreach (var item in ListaLeft(nomes, funcionarios))
 {
     Console.WriteLine($"{item.Id} - {item.Nome} - {item.Cargo}");
 }
